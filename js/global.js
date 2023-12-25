@@ -677,16 +677,25 @@ const html_Comp = {
     const territorios = await Store.getCollection("territorios");
     // console.log(gamesList);
 
+/*     _html.elemento(
+      "div",
+      ["class"],
+      [" col-md-3 m-3 p-0"],
+      "bdj-conteudo",
+      `<hr class="mb-0 mt-0">`)
+
+ */
     territorios.forEach((territorio) => {
       //   console.log(game.nome);
+      
 
       _html.elemento(
         "div",
         ["class"],
-        ["card col-md-3 m-3 p-0"],
+        ["col-md-3 p-0"],
         "bdj-conteudo",
         `
-        <div class="card-body row">
+        <div class=" row">
           <div class="col-3">
             <div src="#" style="border: solid 2px black;" class="p-4 m-0">
             </div>
@@ -723,6 +732,12 @@ const html_Comp = {
           referencia
         );
       });
+      _html.elemento(
+        "div",
+        ["class"],
+        [" col-md-3 m-3 p-0"],
+        "bdj-conteudo",
+        `<hr class="mb-0 mt-0">`)
     });
   },
 };
