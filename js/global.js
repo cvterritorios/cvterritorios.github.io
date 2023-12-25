@@ -20,20 +20,14 @@ const Url = {
 };
 
 //User
-const User = {
-  uid: "",
-  adm: false,
-  username: "",
-  nome: "",
-  sobrenome: "",
-  dataNascimento: [],
-  amigos: [],
-  theme: "dark",
-  id: "",
-  descricao: "",
-  gostos: [],
-  new_chat: true,
-  chats: [{}],
+const Territorio = {
+  ID: "",
+  area: "",
+  disponivel: false,
+  num: "",
+  num_casas: 0,
+  observacao: "",
+  referencias: [],
 };
 
 //--------------------------------------------------------------------------------------------
@@ -45,40 +39,6 @@ const User = {
 //--------------------------------------------------------------------------------------------
 
 const html_Comp = {
-  rodape() {
-    _html.elemento(
-      "div",
-      ["id", "class"],
-      ["rodape", "w-100 bg-dark d-flex"],
-      "conteudo",
-      `
-        <hr class="mt-0">
-        <div class="w-100 d-flex justify-content-center">
-            <div class="w-75 text-center">
-                Todos direitos reservados a Greaclos 2023
-            </div>
-        </div>
-        `
-    );
-  },
-
-  conteudo(cont) {
-    if (cont == "clear") {
-      document.querySelector("#conteudo").innerHTML = "";
-    } else {
-      _html.elemento(
-        "div",
-        ["id", "class"],
-        ["inner-conteudo", "w-100 pt-4 d-flex justify-content-center"],
-        "conteudo",
-        `<div class="mt-0 m-3" id="cont-cont">
-            ${cont}
-            </div>
-        `
-      );
-    }
-  },
-
   async adm_CRUD(mode, docId) {
     document.querySelector("#modal").innerHTML = "";
 
@@ -122,15 +82,14 @@ const html_Comp = {
         `<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div
           class="modal-content rounded-4 shadow"
-          style="background-color: ${Theme.modal.backColor}; color: ${Theme.modal.text}"
         >
           <div
             class="modal-header p-5 pb-4 border-bottom-0"
           >
-            <h1 class="fw-bold mb-0 fs-2">Adicionar Jogo</h1>
+            <h1 class="fw-bold mb-0 fs-2">Adicionar Território</h1>
             <button
               type="button"
-              class="btn-close ${Theme.modal.closeBtn}"
+              class="btn-close "
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
@@ -144,44 +103,41 @@ const html_Comp = {
                   required=""
                   type="text"
                   class="form-control"
-                  style="background-color: ${Theme.form.textbox}"
                   placeholder="Nome do Jogo"
                   id="nameGAdm"
-                /><label for="nameGAdm" style="color: ${Theme.form.colorText}">Nome do Jogo</label>
+                /><label for="nameGAdm">Nome do Jogo</label>
               </div>
               <div class="form-floating">
                   <input
                     required=""
                     type="number"
                     class="form-control"
-                    style="background-color: ${Theme.form.textbox}"
                     placeholder="Nº de players"
                     id="n_plGAdm"
-                  /><label for="n_plGAdm" style="color: ${Theme.form.colorText}">Nº de players</label>
+                  /><label for="n_plGAdm" >Nº de players</label>
                 </div>
               </div>
 
               <div class="form-floating mb-3">
-                <textarea class="form-control" style="background-color: ${Theme.form.textbox}; height: 80px;" placeholder="Descrição do jogo" id="tescGAdm"></textarea>
-                <label for="tescGAdm" style="color: ${Theme.form.colorText}">Descrição do jogo</label>
+                <textarea class="form-control" style=" height: 80px;" placeholder="Descrição do jogo" id="tescGAdm"></textarea>
+                <label for="tescGAdm">Descrição do jogo</label>
               </div>
 
               <div class="input-group mb-3 w-100 d-flex align-items-stretch">
                 <input class="form-control" 
-                  style="max-width:8rem; background-color: ${Theme.form.textbox};color:gray" 
+                  style="max-width:8rem;color:gray" 
                   disabled value="/html/games/" />
                 <div class="form-floating">
                   <input
                     required=""
                     type="text"
                     class="form-control"
-                    style="background-color: ${Theme.form.textbox}"
                     placeholder="URL"
                     id="urlGAdm"
-                  /><label for="urlGAdm" style="color: ${Theme.form.colorText}">Nome do jogo URL</label>
+                  /><label for="urlGAdm" >Nome do jogo URL</label>
                 </div>
                 <input class="form-control" 
-                  style="max-width:5rem; background-color: ${Theme.form.textbox};color:gray" 
+                  style="max-width:5rem; color:gray" 
                   disabled value=".html" />
               </div>
 
@@ -190,7 +146,7 @@ const html_Comp = {
               <button
                 class="w-100 mb-2 btn btn-lg rounded-3 bg-primary text-light"
                 type="button"
-                onclick="adm_db.setJogo()"
+                onclick=""
               >
                 Adicionar
               </button>
@@ -685,7 +641,7 @@ const html_Comp = {
             <path fill="${color}" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48" d="M88 152h336M88 256h336M88 360h336"/></svg>
           </button>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Novo Território</a></li>
+            <li><a class="dropdown-item" onclick="html_Comp.adm_CRUD('create')">Novo Território</a></li>
             <li><a class="dropdown-item" href="#">Another action</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
