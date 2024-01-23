@@ -39,297 +39,6 @@ const Territorio = {
 //--------------------------------------------------------------------------------------------
 
 const html_Comp = {
-  async adm_CRUD(mode, docId) {
-    document.querySelector("#modal").innerHTML = "";
-
-    console.log("in ADM CRUD");
-    _html.elemento(
-      "button",
-      ["id", "type", "class", "data-bs-toggle", "data-bs-target"],
-      [
-        "adm-modal",
-        "button",
-        "btn btn-primary visually-hidden",
-        "modal",
-        "#admModal",
-      ],
-      "modal",
-      "ADM CRUD Modal"
-    );
-
-    if (mode === "create") {
-      _html.elemento(
-        "div",
-        [
-          "id",
-          "class",
-          "data-bs-backdrop",
-          "data-bs-keyboard",
-          "tabindex",
-          "aria-labelledby",
-          "aria-hidden",
-        ],
-        [
-          "admModal",
-          "modal fade",
-          "static",
-          "false",
-          "-1",
-          "#admModalLabel",
-          "true",
-        ],
-        "modal",
-        `<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div
-          class="modal-content rounded-4 shadow"
-        >
-          <div
-            class="modal-header p-5 pb-4 border-bottom-0"
-          >
-            <h1 class="fw-bold mb-0 fs-2">Adicionar Território</h1>
-            <button
-              type="button"
-              class="btn-close "
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-5 pt-0">
-              <div class="w-100"></div>
-
-              <div class="input-group input-group-sm mb-3">
-                <div class="form-floating">
-                <input
-                  required=""
-                  type="text"
-                  class="form-control"
-                  placeholder="Nome do Jogo"
-                  id="nameGAdm"
-                /><label for="nameGAdm">Nome do Jogo</label>
-              </div>
-              <div class="form-floating">
-                  <input
-                    required=""
-                    type="number"
-                    class="form-control"
-                    placeholder="Nº de players"
-                    id="n_plGAdm"
-                  /><label for="n_plGAdm" >Nº de players</label>
-                </div>
-              </div>
-
-              <div class="form-floating mb-3">
-                <textarea class="form-control" style=" height: 80px;" placeholder="Descrição do jogo" id="tescGAdm"></textarea>
-                <label for="tescGAdm">Descrição do jogo</label>
-              </div>
-
-              <div class="input-group mb-3 w-100 d-flex align-items-stretch">
-                <input class="form-control" 
-                  style="max-width:8rem;color:gray" 
-                  disabled value="/html/games/" />
-                <div class="form-floating">
-                  <input
-                    required=""
-                    type="text"
-                    class="form-control"
-                    placeholder="URL"
-                    id="urlGAdm"
-                  /><label for="urlGAdm" >Nome do jogo URL</label>
-                </div>
-                <input class="form-control" 
-                  style="max-width:5rem; color:gray" 
-                  disabled value=".html" />
-              </div>
-
-              
-
-              <button
-                class="w-100 mb-2 btn btn-lg rounded-3 bg-primary text-light"
-                type="button"
-                onclick=""
-              >
-                Adicionar
-              </button>
-          </div>
-        </div>
-      </div>`
-      );
-    } else if (mode === "update") {
-      if (docId) {
-        const game_db = await Store.getDoc("games", docId);
-        console.log("game_db", game_db);
-        _html.elemento(
-          "div",
-          [
-            "id",
-            "class",
-            "data-bs-backdrop",
-            "data-bs-keyboard",
-            "tabindex",
-            "aria-labelledby",
-            "aria-hidden",
-          ],
-          [
-            "admModal",
-            "modal fade",
-            "static",
-            "false",
-            "-1",
-            "#admModalLabel",
-            "true",
-          ],
-          "modal",
-          `<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div
-          class="modal-content rounded-4 shadow"
-          style="background-color: ${Theme.modal.backColor}; color: ${
-            Theme.modal.text
-          }"
-        >
-          <div
-            class="modal-header p-5 pb-4 border-bottom-0"
-          >
-            <h1 class="fw-bold mb-0 fs-2">Adicionar Jogo</h1>
-            <button
-              type="button"
-              class="btn-close ${Theme.modal.closeBtn}"
-              id="modal-close-up"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-5 pt-0">
-              <div class="w-100"></div>
-
-              <div class="input-group input-group-sm mb-3">
-                <div class="form-floating">
-                <input
-                  required=""
-                  type="text"
-                  class="form-control"
-                  style="background-color: ${Theme.form.textbox}"
-                  placeholder="Nome do Jogo"
-                  value="${game_db.nome}"
-                  id="nameGAdm"
-                /><label for="nameGAdm" style="color: ${
-                  Theme.form.colorText
-                }">Nome do Jogo</label>
-              </div>
-              <div class="form-floating">
-                  <input
-                    required=""
-                    type="number"
-                    value="${parseInt(game_db.num_participantes)}"
-                    class="form-control"
-                    style="background-color: ${Theme.form.textbox}"
-                    placeholder="Nº de players"
-                    id="n_plGAdm"
-                  /><label for="n_plGAdm" style="color: ${
-                    Theme.form.colorText
-                  }">Nº de players</label>
-                </div>
-              </div>
-
-              <div class="form-floating mb-3">
-                <textarea class="form-control" style="background-color: ${
-                  Theme.form.textbox
-                }; height: 80px;" placeholder="Descrição do jogo" id="tescGAdm">${
-            game_db.descricao
-          }</textarea>
-                <label for="tescGAdm" style="color: ${
-                  Theme.form.colorText
-                }">Descrição do jogo</label>
-              </div>
-
-              <div class="form-floating mb-3">
-                  <input
-                    required=""
-                    type="text"
-                    class="form-control"
-                    style="background-color: ${Theme.form.textbox}"
-                    value="${game_db.url}"
-                    placeholder="URL"
-                    id="urlGAdm"
-                  /><label for="urlGAdm" style="color: ${
-                    Theme.form.colorText
-                  }">URL</label>
-                </div>
-
-
-                <div class="btn-group w-100 mb-2" role="group" aria-label="Basic mixed styles example">
-                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-close-up').click()">Cancelar</button>
-                  <button type="button" onclick="adm_db.update('${docId}')" class="btn btn-success">Editar</button>
-                </div>
-
-              
-          </div>
-        </div>
-      </div>`
-        );
-      }
-    } else if (mode === "delete") {
-      if (docId) {
-        _html.elemento(
-          "div",
-          [
-            "id",
-            "class",
-            "data-bs-backdrop",
-            "data-bs-keyboard",
-            "tabindex",
-            "aria-labelledby",
-            "aria-hidden",
-          ],
-          [
-            "admModal",
-            "modal fade",
-            "static",
-            "false",
-            "-1",
-            "#admModalLabel",
-            "true",
-          ],
-          "modal",
-          `<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div
-          class="modal-content rounded-4 shadow"
-          style="background-color: ${Theme.modal.backColor}; color: ${Theme.modal.text}"
-        >
-          <div
-            class="modal-header p-5 pb-4 border-bottom-0"
-          >
-            <h1 class="fw-bold mb-0 fs-2">Adicionar Jogo</h1>
-            <button
-              type="button"
-              class="btn-close ${Theme.modal.closeBtn}"
-              data-bs-dismiss="modal"
-              id="modal-close-del"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-5 pt-0">
-              <div class="w-100"></div>
-
-              <p class="lead" style="color:${Theme.textColor}">
-                Tem certeza que deseja apagar este jogo?
-              </p>
-
-              <div class="btn-group w-100 mb-2" role="group" aria-label="Basic mixed styles example">
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-close-del').click()">Cancelar</button>
-                <button type="button" onclick="adm_db.delete('${docId}')" class="btn btn-danger">Apagar</button>
-              </div>
-
-          </div>
-        </div>
-      </div>`
-        );
-      }
-    }
-
-    console.log(document.getElementById("adm-modal"));
-    document.getElementById("adm-modal").click();
-  },
-
   authModal(type) {
     document.querySelector("#modal").innerHTML = "";
 
@@ -615,12 +324,13 @@ const html_Comp = {
     _html.elemento(
       "nav",
       ["class"],
-      [`navbar navbar-expand-lg navbar-dark bg-dark`],
+      [`navbar navbar-expand-lg navbar-dark bg-dark p-0`],
       "nav" /* div com id #nav */,
       `
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">CVT</a>
-        <div>
+      <div class="container-fluid p-0 ">
+        <a class="navbar-brand"
+          style="font-size:2.3rem; padding: 0px 8.2px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
+        <div class="p-2">
           <button class="btn btn-outline-light p-1" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" 
             width="28px" height="28px" class="ionicon" 
@@ -635,18 +345,7 @@ const html_Comp = {
             <path fill="${color}" d="M240 480H32V272h208zM76 436h120V316H76z"/>
             </svg>
           </button>
-          <button class="btn btn-outline-light p-1 dropdown-toggle" type="button" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px"
-            class="ionicon" viewBox="0 0 512 512">
-            <path fill="${color}" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48" d="M88 152h336M88 256h336M88 360h336"/></svg>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" onclick="html_Comp.adm_CRUD('create')">Novo Território</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        
+          
         </div>
 
       </div>`
@@ -654,71 +353,55 @@ const html_Comp = {
   },
 
   async bandeja() {
-    _html.elemento(
-      "div",
-      ["class", "id"],
-      ["w-100 row m-0 ", "bdj"],
-      "conteudo"
-    );
-    _html.elemento(
-      "div",
-      ["class", "id"],
-      ["col-sm p-4 pt-1", "bdj-in"],
-      "bdj"
-    );
-    _html.elemento(
-      "div",
-      ["class", "id"],
-      ["row d-flex justify-content-center col-md-12", "bdj-conteudo"],
-      "bdj-in"
-    );
+    _html.elemento("div", ["id"], ["bdj"], "conteudo");
 
     //pegar na firestore as info dos jogos
     const territorios = await Store.getCollection("territorios");
     // console.log(gamesList);
 
-/*     _html.elemento(
-      "div",
-      ["class"],
-      [" col-md-3 m-3 p-0"],
-      "bdj-conteudo",
-      `<hr class="mb-0 mt-0">`)
-
- */
-    territorios.forEach((territorio) => {
-      //   console.log(game.nome);
-      
-
+    _html.elemento("div",["class","id"],["row justify-content-md-start","linha"],"bdj")
+    
+    territorios.forEach((territorio,idx) => {
       _html.elemento(
         "div",
         ["class"],
-        ["col-md-3 p-0"],
-        "bdj-conteudo",
+        ["col-md-auto p-0"],
+        "linha",
         `
-        <div class=" row">
-          <div class="col-3">
-            <div src="#" style="border: solid 2px black;" class="p-4 m-0">
-            </div>
-          </div>
-          <div class="col">
-            <div class="d-flex justify-content-between mb-0">
-              <h5 class="card-title">Territorio Nº ${territorio.num}</h5>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="" ${
-                  territorio.disponivel ? "checked" : ""
-                }  disabled>
-                <label class="form-check-label" for=""></label>
+        <div class="card terr border border-end-0 border-start-0 rounded-0" style="width: 23.66rem;">
+          <div class="card-body">
+        
+            <div class="container text-center">
+              <div class="row">
+                
+                <div class="col-3 pt-2 bg-success">
+                  One of colum
+                </div>
+                
+                <div class="col fs-6">
+                  
+                  
+                  <div class="d-flex justify-content-between " style="width:100%">
+                    <div class=" text-start">Território Nº ${
+                      territorio.num
+                    }</div>
+                    <div class=" text-end" style="font-size:16px">${
+                      territorio.disponivel
+                        ? '<span class="text-success">Disponivel</span>'
+                        : '<span class="text-danger">Indisponivel</span>'}
+                    </div>
+                  </div>
+
+                  <div class="row fs-6 text-start">
+                    <div class="col" id="referencia${idx}"></div>
+                  </div>
+
+                </div>
+
               </div>
             </div>
-            
-            <div id="tags" class="btn-group w-100" role="group" aria-label="Basic mixed styles example">
-              <!--
-              <span class="badge mt-0 mb-0 m-1 bg-secondary">Secondary</span>
-              <span class="badge mt-0 mb-0 bg-secondary">Secondary</span>
-              -->
-            </div>  
+        
           </div>
-
         </div>`
       );
 
@@ -727,17 +410,12 @@ const html_Comp = {
         _html.elemento(
           "span",
           ["class"],
-          [`badge mt-0 mb-0 text-dark border ${index == 1 ? "m-1" : ""}`],
-          "tags",
+          [`badge text-dark border bg-light ${index == 1 ? "m-1" : ""}`],
+          `referencia${idx}`,
           referencia
         );
       });
-      _html.elemento(
-        "div",
-        ["class"],
-        [" col-md-3 m-3 p-0"],
-        "bdj-conteudo",
-        `<hr class="mb-0 mt-0">`)
+
     });
   },
 };
@@ -1336,8 +1014,6 @@ const _aux = {
   },
 
   //Cria os alestas dentro de divs
-  //    devem haver divs no codigo com id "alert-..." exclusivamente para serem usadas pelos alertas
-  //  idTarget    string      //se reefere ao id da div alert
   //  meessage    string      //mensagem que aparecerá no alerta
   //  type        string      //tipo de alerta
   //                            success - para alertas de sucesso
