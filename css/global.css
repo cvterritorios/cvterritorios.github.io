@@ -1,5 +1,4 @@
-/* imports */
-@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600&display=swap");
+
 
 @media screen and (max-width: 1000px) {
   .card.game {
@@ -53,6 +52,7 @@ body {
   margin: 0;
   padding: o;
   display: block;
+  font-family: 'Noto Sans';
 }
 
 .centralizar {
@@ -136,4 +136,12 @@ button.floattingButton:hover{
   box-shadow: 0px 0px 5px;
 
 }
-/* Tic Tac Toe */
+
+.card.terr{
+  cursor: pointer;
+}
+
+.card.terr:hover{
+  opacity: 0.85;
+  transform: scale(1.01);
+}
