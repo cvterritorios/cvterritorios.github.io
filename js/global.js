@@ -83,7 +83,7 @@ const html_Comp = {
       <div
         id="modalEntrar-content"
         class="modal-content rounded-4 shadow"
-        style="background-color: ${Theme.modal.backColor}; color: ${Theme.modal.text}"
+        style="background-color: white; color: black"
       >
         <div
           id="modalEntrar-content-header"
@@ -92,7 +92,7 @@ const html_Comp = {
           <h1 class="fw-bold mb-0 fs-2">Entrar na Greaclos</h1>
           <button
             type="button"
-            class="btn-close ${Theme.modal.closeBtn}"
+            class="btn-close text-secondary"
             data-bs-dismiss="modal"
             aria-label="Close"
             id="modal-close-Entrar"
@@ -105,10 +105,10 @@ const html_Comp = {
                 required=""
                 type="email"
                 class="form-control"
-                style="background-color: ${Theme.form.textbox}"
+                
                 placeholder="E-mail"
                 id="emailLg"
-              /><label for="emailLg" style="color: ${Theme.form.colorText}">E-mail</label>
+              /><label for="emailLg">E-mail</label>
             </div>
             <div class="form-floating mb-3">
               <input
@@ -116,10 +116,10 @@ const html_Comp = {
                 type="password"
                 minlength="6"
                 class="form-control"
-                style="background-color: ${Theme.form.textbox}"
+                
                 placeholder="Palavra-passe"
                 id="passwordLg"
-              /><label for="passwordLg" style="color: ${Theme.form.colorText}">Palavra-passe</label>
+              /><label for="passwordLg">Palavra-passe</label>
             </div>
             <button
             id="btn-login"
@@ -313,6 +313,60 @@ const html_Comp = {
         </div>
       </div>`
       );
+    }else if (type === "show") {
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-backdrop",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          "authModal",
+          "modal fade",
+          "static",
+          "false",
+          "-1",
+          "#authModalLabel",
+          "true",
+        ],
+        "modal",
+        `<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div
+          id="modalRegistar-content"
+          class="modal-content rounded-4 shadow"
+          
+        >
+          <div
+            id="modalRegistar-content-header"
+            class="modal-header p-5 pb-4 border-bottom-0"
+          >
+            <h1 class="fw-bold mb-0 fs-2">Olá {Nome}</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="modal-close-Registar"
+            ></button>
+          </div>
+          <div id="modalRegistar-body" class="modal-body p-5 pt-0">
+            Para terminar sessão:</br></br>
+            <button
+              type="button"
+              class="btn btn-danger"
+            >Sair</button>
+            </br>
+            </br>
+            Se deseja nos contactar, clique <a href="#">aqui</a>.
+          </div>
+        </div>
+      </div>`
+      );
     }
 
     document.getElementById("auth-modal").click();
@@ -328,7 +382,7 @@ const html_Comp = {
       "nav" /* div com id #nav */,
       `
       <div class="container-fluid p-0 ">
-        <a class="navbar-brand"
+        <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
           style="font-size:2.3rem; padding: 0px 8.2px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
         <div class="p-2">
           <button class="btn btn-outline-light p-1" type="button">
