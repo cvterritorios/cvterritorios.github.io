@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     ["class"],
     ["d-flex mb-3"],
     "conteudo",
-    `<input class="form-control" type="search" placeholder="Search" aria-label="Search">`
+    `<input class="form-control" type="search" placeholder="Pesquisar" aria-label="Pesquisar">`
   );
 
 
