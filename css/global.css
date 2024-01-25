@@ -145,3 +145,11 @@ button.floattingButton:hover{
   opacity: 0.85;
   transform: scale(1.01);
 }
+
+.btn-opcoes{
+  cursor: pointer;
+}
+
+.btn-opcoes:hover{
+  transform: scale(1.04);
+}

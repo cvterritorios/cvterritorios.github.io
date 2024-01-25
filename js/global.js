@@ -313,7 +313,7 @@ const html_Comp = {
         </div>
       </div>`
       );
-    }else if (type === "show") {
+    } else if (type === "show") {
       _html.elemento(
         "div",
         [
@@ -372,6 +372,85 @@ const html_Comp = {
     document.getElementById("auth-modal").click();
   },
 
+  modal(type, territorio, state, message) {
+    // opcoes - atribuir/desatribuir, detalhes, editar, eliminar
+    // confirmação - if message contain "eliminar/atribuir/desatribuir"
+    // detalhes
+    // editar
+    //
+    document.querySelector("#modal").innerHTML = "";
+
+    //Button trigger modal
+    _html.elemento(
+      "button",
+      ["id", "type", "class", "data-bs-toggle", "data-bs-target"],
+      [
+        `${type}-modal`,
+        "button",
+        "btn btn-primary invisible",
+        "modal",
+        `#${type}Modal`,
+      ],
+      "modal",
+      `${type} Modal`
+    );
+
+    if (type === "opcoes") {
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "-1",
+          `#${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center">
+          <h5 class="fw-bold m-auto">Território Nº ${territorio}</h5>
+          <hr>
+          <h6 class="fw-bold m-auto btn-opcoes"
+            onclick="alert('atribuir')">
+              ${state ? '<span class="text-danger">Desatribuir</span>' : '<span class="text-success">Atribuir</span>'}
+            </h6>
+          <hr>
+          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('detalhes')">Detalhes</h6>
+          <hr>
+          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('editar')">Editar</h6>
+          <hr>
+          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('eliminar')">Eliminar</h6>
+        </div>
+      </div>
+      `
+      );
+    }
+
+    // listnerEvent.login();
+    document.getElementById(`${type}-modal`).click();
+  },
+
   navBar() {
     let color = "white";
     //Nav
@@ -383,7 +462,7 @@ const html_Comp = {
       `
       <div class="container-fluid p-0 ">
         <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
-          style="font-size:2.3rem; padding: 0px 8.2px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
+          style="font-size:2.3rem; padding: 0px 8px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
         <div class="p-2">
           <button class="btn btn-outline-light p-1" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" 
@@ -413,16 +492,24 @@ const html_Comp = {
     const territorios = await Store.getCollection("territorios");
     // console.log(gamesList);
 
-    _html.elemento("div",["class","id"],["row justify-content-md-start","linha"],"bdj")
-    
-    territorios.forEach((territorio,idx) => {
+    _html.elemento(
+      "div",
+      ["class", "id"],
+      ["row justify-content-md-start", "linha"],
+      "bdj"
+    );
+
+    territorios.forEach((territorio, idx) => {
       _html.elemento(
         "div",
         ["class"],
         ["col-md-auto p-0"],
         "linha",
         `
-        <div class="card terr border border-end-0 border-start-0 rounded-0" style="width: 23.66rem;">
+        <div class="card terr border border-end-0 border-start-0 rounded-0" 
+          style="width: 23.66rem;"
+          onclick="alert('clicou')"
+          >
           <div class="card-body">
         
             <div class="container text-center">
@@ -442,7 +529,8 @@ const html_Comp = {
                     <div class=" text-end" style="font-size:16px">${
                       territorio.disponivel
                         ? '<span class="text-success">Disponivel</span>'
-                        : '<span class="text-danger">Indisponivel</span>'}
+                        : '<span class="text-danger">Indisponivel</span>'
+                    }
                     </div>
                   </div>
 
@@ -469,7 +557,6 @@ const html_Comp = {
           referencia
         );
       });
-
     });
   },
 };
