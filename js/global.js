@@ -431,16 +431,16 @@ const html_Comp = {
         <div id="modal${type}-body" class="modal-body text-center">
           <h5 class="fw-bold m-auto">Território Nº ${territorio}</h5>
           <hr>
-          <h6 class="fw-bold m-auto btn-opcoes"
+          <h6 class="fw m-auto btn-opcoes"
             onclick="alert('atribuir')">
               ${state ? '<span class="text-danger">Desatribuir</span>' : '<span class="text-success">Atribuir</span>'}
             </h6>
           <hr>
-          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('detalhes')">Detalhes</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="alert('detalhes')">Detalhes</h6>
           <hr>
-          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('editar')">Editar</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="alert('editar')">Editar</h6>
           <hr>
-          <h6 class="fw-bold m-auto btn-opcoes" onclick="alert('eliminar')">Eliminar</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="alert('eliminar')">Eliminar</h6>
         </div>
       </div>
       `
@@ -508,7 +508,7 @@ const html_Comp = {
         `
         <div class="card terr border border-end-0 border-start-0 rounded-0" 
           style="width: 23.66rem;"
-          onclick="alert('clicou')"
+          onclick="html_Comp.modal('opcoes')"
           >
           <div class="card-body">
         
