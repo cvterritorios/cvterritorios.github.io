@@ -3,9 +3,9 @@ const dt = new Date();
 const today = {
   dia: dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate() + "",
   mes:
-    dt.getUTCMonth() + 1 < 10
-      ? "0" + dt.getUTCMonth() + 1
-      : "" + (dt.getUTCMonth() + 1),
+    1 + dt.getUTCMonth() < 10
+      ? "0" + (1 + dt.getUTCMonth())
+      : "" + (1 + dt.getUTCMonth()),
   ano: dt.getFullYear(),
 
   date() {
@@ -372,12 +372,14 @@ const html_Comp = {
     document.getElementById("auth-modal").click();
   },
 
-  modal(type, territorio, state, message) {
+  modal(type, territorioNum, state, message) {
     // opcoes - atribuir/desatribuir, detalhes, editar, eliminar
     // confirmação - if message contain "eliminar/atribuir/desatribuir"
     // detalhes
     // editar
-    //
+    let closeOp = document.getElementById("modal-opcoes-close");
+    closeOp ? closeOp.click() : "";
+
     document.querySelector("#modal").innerHTML = "";
 
     //Button trigger modal
@@ -429,11 +431,17 @@ const html_Comp = {
         style="background-color: white; color: black"
       >
         <div id="modal${type}-body" class="modal-body text-center">
-          <h5 class="fw-bold m-auto">Território Nº ${territorio}</h5>
+          <h5 class="fw-bold m-auto">Território Nº ${territorioNum}</h5>
           <hr>
           <h6 class="fw m-auto btn-opcoes"
-            onclick="alert('atribuir')">
-              ${state ? '<span class="text-danger">Desatribuir</span>' : '<span class="text-success">Atribuir</span>'}
+            onclick="html_Comp.modal('${
+              state ? "atribuir" : "desatribuir"
+            }',${territorioNum},${state})">
+              ${
+                state
+                  ? '<span class="text-success">Atribuir</span>'
+                  : '<span class="text-danger">Desatribuir</span>'
+              }
             </h6>
           <hr>
           <h6 class="fw m-auto btn-opcoes" onclick="alert('detalhes')">Detalhes</h6>
@@ -441,6 +449,60 @@ const html_Comp = {
           <h6 class="fw m-auto btn-opcoes" onclick="alert('editar')">Editar</h6>
           <hr>
           <h6 class="fw m-auto btn-opcoes" onclick="alert('eliminar')">Eliminar</h6>
+          <button type="button" class="invisible" id="modal-${type}-close" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+      `
+      );
+    }
+
+    if (type === "atribuir") {
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "-1",
+          `#${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold m-auto mt-4">Território Nº ${territorioNum}</h5>
+          <hr>
+    
+          <div class="m-3">
+            <label class="form-label text-start w-100"> Data: ${today.date()}</label>
+            <input type="text" class="form-control col" placeholder="Nome do publicador" />
+          </div>
+    
+          <hr class="mb-0">
+          <div class="row mt-0 mb-5">
+            <button class=" col btn-conf-modal border-end">Cancelar</button>
+            <button class=" col btn-conf-modal border-start">Ok</button>
+          </div>
         </div>
       </div>
       `
@@ -499,6 +561,8 @@ const html_Comp = {
       "bdj"
     );
 
+    html_Comp.modal;
+
     territorios.forEach((territorio, idx) => {
       _html.elemento(
         "div",
@@ -508,7 +572,9 @@ const html_Comp = {
         `
         <div class="card terr border border-end-0 border-start-0 rounded-0" 
           style="width: 23.66rem;"
-          onclick="html_Comp.modal('opcoes')"
+          onclick="html_Comp.modal('opcoes',${territorio.num},${
+          territorio.disponivel
+        })"
           >
           <div class="card-body">
         

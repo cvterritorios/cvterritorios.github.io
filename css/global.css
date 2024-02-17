@@ -153,3 +153,10 @@ button.floattingButton:hover{
 .btn-opcoes:hover{
   transform: scale(1.04);
 }
+
+.btn-conf-modal{
+  height:3.5rem;
+  margin: 0;
+  border-radius: 0;
+  border-style: none;
+}
