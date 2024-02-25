@@ -377,7 +377,7 @@ const html_Comp = {
     // confirmação - if message contain "eliminar/atribuir/desatribuir"
     // detalhes
     // editar
-    console.log(type,territorioNum,state,id)
+    console.log(type, territorioNum, state, id);
     let closeOp = document.getElementById("modal-opcoes-close");
     closeOp ? closeOp.click() : "";
     const confirm = (type, num, message) => {
@@ -578,10 +578,8 @@ const html_Comp = {
     }
 
     if (type === "detalhes") {
+      let territorio = await Store.getDoc("territorios", id);
 
-      let territorio = await Store.getDoc("territorios",id)
-      console.log(territorio)
-      
       _html.elemento(
         "div",
         [
@@ -642,31 +640,38 @@ const html_Comp = {
             </label>
           </div>
           
-          <hr>
-          <div class="m-3">
-            <label class="form-label text-start w-100"> <strong>Informações de atribuição:</strong> </label>
-            <div class="m-1">
-              <label class="form-label text-start w-100"> Nome do publicador: <span>Fulano</span> </label>
-              <label class="form-label text-start w-100"> Data de atribuição: <span>DD de MM de AAAA</span> </label>
-            </div>
-          </div>
-
-          <hr class="mb-0">
-          <div class="row m-0 p-0">
-            <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
-            <button type="button" class="col btn-conf-modal border-start">Ok</button>
-          </div>
+          ${
+            state
+              ? ""
+              : `
+                  <hr>
+                  <div class="m-3">
+                    <label class="form-label text-start w-100"> <strong>Informações de atribuição:</strong> </label>
+                    <div class="m-1">
+                      <label class="form-label text-start w-100"> Nome do publicador: <span>${territorio.atribuicao.publicador}</span> </label>
+                      <label class="form-label text-start w-100"> Data de atribuição: <span>${territorio.atribuicao.data}</span> </label>
+                    </div>
+                  </div>`
+          }
         </div>
       </div>
       `
       );
 
-      territorio.referencias.forEach((ref) =>{
-        _html.elemento("span",["class"],["badge text-dark border m-1 text-start bg-light"],"refsDetails",ref)
-      })
+      territorio.referencias.forEach((ref) => {
+        _html.elemento(
+          "span",
+          ["class"],
+          ["badge text-dark border m-1 text-start bg-light"],
+          "refsDetails",
+          ref
+        );
+      });
     }
 
     if (type === "editar") {
+      let territorio = await Store.getDoc("territorios", id);
+
       _html.elemento(
         "div",
         [
@@ -708,12 +713,16 @@ const html_Comp = {
             <input type="file" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
 
             <div class="form-floating">
-              <input type="number" class="form-control" id="numInput" placeholder="numero">
+              <input type="number" class="form-control" value="${territorio.num}" id="numInput" placeholder="numero">
               <label for="numInput">Número do território</label>
             </div>
 
-            <label class="text-start w-100 mb-1"><strong>Mapa</strong></label>
-            <label class="text-start w-100 mb-3"><strong>Mapa</strong></label>
+            <label class="text-start w-100 mb-1"><strong>Referências</strong></label>
+            <div class="p-4 pt-1 pb-1" id="ref-edit"></div>
+            <div class="p-3 input-group input-group-sm w-100 pt-1 pb-1 ">
+                <input type="text" class="form-control w-75 m-0 form-control-sm" id="text-to-add-ref" />
+                <button class="btn btn-primary btn-sm w-25 m-0 " onclick="document.getElementById('text-to-add-ref').value ? _aux.addRef(document.getElementById('text-to-add-ref').value,${territorio.referencias.length}) : _aux.alertar('Texto vazio','warning')">Adicionar</button>                
+            </div>
 
           </div>
 
@@ -726,6 +735,18 @@ const html_Comp = {
       </div>
       `
       );
+
+      territorio.referencias.forEach((ref, idx) => {
+        _html.elemento(
+          "div",
+          ["class", "id"],
+          ["row bg-light p-1 rounded mb-1", `ref-${idx}`],
+          "ref-edit",
+          `
+          <div class="col text-start">${ref}</div>
+          <button class="btn-close col-1" onclick="_html.removeRef('ref-${idx}')"></button>`
+        );
+      });
     }
 
     // listnerEvent.login();
@@ -741,7 +762,7 @@ const html_Comp = {
       [`navbar navbar-expand-lg navbar-dark bg-dark p-0`],
       "nav" /* div com id #nav */,
       `
-      <div class="container-fluid p-0 ">
+      <div class="container-fluid container p-0 ">
         <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
           style="font-size:2.3rem; padding: 0px 8px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
         <div class="p-2">
@@ -792,7 +813,8 @@ const html_Comp = {
         <div class="card terr border border-end-0 border-start-0 rounded-0" 
           style="width: 23.66rem;"
           onclick="html_Comp.modal('opcoes',${territorio.num},${
-          territorio.disponivel},'${territorio.ID}')"
+          territorio.disponivel
+        },'${territorio.ID}')"
           >
           <div class="card-body">
         
@@ -948,6 +970,11 @@ const _html = {
     label.setAttribute("for", `${id}`);
     label.innerHTML = v_Attrs[v_Attrs.length - 1];
     div.appendChild(label);
+  },
+
+  removeRef(ref_id) {
+    const refElement = document.querySelector(`#${ref_id}`);
+    refElement.remove();
   },
 };
 
@@ -1285,11 +1312,11 @@ const Store = {
     const dbRef = db.collection(collection).doc(doc);
 
     const DOC = await dbRef.get().then((docc) => {
-/*         let fich = {
+      /*         let fich = {
           ...docc.data()
         };
         return fich;
- */      
+ */
       // console.log(docc.data());
       return docc.data();
     });
@@ -1387,6 +1414,22 @@ const Storage = {
 const _aux = {
   Reload() {
     window.location.reload(false);
+  },
+
+  addRef(text, tamanho) {
+    _html.elemento(
+      "div",
+      ["class", "id"],
+      ["row bg-light p-1 rounded mb-1", `ref-${tamanho + 1}`],
+      "ref-edit",
+      `
+      <div class="col text-start">${text}</div>
+      <button class="btn-close col-1" onclick="_html.removeRef('ref-${
+        tamanho + 1
+      }')"></button>`
+    );
+
+    document.getElementById('text-to-add-ref').value = ""
   },
 
   async Navigate(url) {
