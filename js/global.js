@@ -19,7 +19,7 @@ const Url = {
   params: new URLSearchParams(window.location.search),
 };
 
-//User
+//Territorio
 const Territorio = {
   ID: "",
   area: "",
@@ -372,13 +372,66 @@ const html_Comp = {
     document.getElementById("auth-modal").click();
   },
 
-  modal(type, territorioNum, state, message) {
+  async modal(type, territorioNum, state, id) {
     // opcoes - atribuir/desatribuir, detalhes, editar, eliminar
     // confirmação - if message contain "eliminar/atribuir/desatribuir"
     // detalhes
     // editar
+    console.log(type, territorioNum, state, id);
     let closeOp = document.getElementById("modal-opcoes-close");
     closeOp ? closeOp.click() : "";
+    const confirm = (type, num, message) => {
+      console.log(type, num, message);
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "-1",
+          `#${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold m-auto mt-4">Território Nº ${num}</h5>
+          <hr>
+    
+          <div class="m-3">
+            <label class="form-label text-start w-100">${message}</label>
+          </div>
+
+          <hr class="mb-0">
+          <div class="row m-0 p-0">
+            <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
+            <button type="button" class="col btn-conf-modal border-start">Ok</button>
+          </div>
+        </div>
+      </div>
+      `
+      );
+    };
 
     document.querySelector("#modal").innerHTML = "";
 
@@ -432,24 +485,29 @@ const html_Comp = {
       >
         <div id="modal${type}-body" class="modal-body text-center">
           <h5 class="fw-bold m-auto">Território Nº ${territorioNum}</h5>
+          <button type="button" class="btn-close m-0 p-0 float-end invisible" id="modal-${type}-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
           <hr>
           <h6 class="fw m-auto btn-opcoes"
             onclick="html_Comp.modal('${
               state ? "atribuir" : "desatribuir"
-            }',${territorioNum},${state})">
+            }',${territorioNum},${state},'${id}')">
               ${
                 state
                   ? '<span class="text-success">Atribuir</span>'
                   : '<span class="text-danger">Desatribuir</span>'
               }
             </h6>
+
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="alert('detalhes')">Detalhes</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('detalhes',${territorioNum},${state},'${id}')">Detalhes</h6>
+          
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="alert('editar')">Editar</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('editar',${territorioNum},${state},'${id}')">Editar</h6>
+          
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="alert('eliminar')">Eliminar</h6>
-          <button type="button" class="invisible" id="modal-${type}-close" data-bs-dismiss="modal">Close</button>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('eliminar',${territorioNum},${state},'${id}')">Eliminar</h6>
+        
         </div>
       </div>
       `
@@ -497,16 +555,198 @@ const html_Comp = {
             <label class="form-label text-start w-100"> Data: ${today.date()}</label>
             <input type="text" class="form-control col" placeholder="Nome do publicador" />
           </div>
-    
+
           <hr class="mb-0">
-          <div class="row mt-0 mb-5">
-            <button class=" col btn-conf-modal border-end">Cancelar</button>
-            <button class=" col btn-conf-modal border-start">Ok</button>
+          <div class="row m-0 p-0">
+            <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
+            <button type="button" class="col btn-conf-modal border-start">Ok</button>
           </div>
         </div>
       </div>
       `
       );
+    }
+
+    if (type === "desatribuir" || type === "eliminar") {
+      const DS_message =
+        "Tem certeza que deseja desatribuir o território deste publicador?";
+      const EL_message = "Tem certeza que deseja eliminar o território?";
+
+      type != "desatribuir"
+        ? confirm(type, territorioNum, EL_message)
+        : confirm(type, territorioNum, DS_message);
+    }
+
+    if (type === "detalhes") {
+      let territorio = await Store.getDoc("territorios", id);
+
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "-1",
+          `#${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold m-auto mt-4">Território Nº ${territorioNum}</h5>
+          
+          <hr>
+          <div class="m-3">
+            <label class="form-label text-start w-100"> <strong>Mapa:</strong> 
+              <img class="form-label text-start w-100 m-1" src="#" />
+            </label>
+          </div>
+
+          <hr>
+          <div class="m-3">
+            <label class="form-label text-start w-100"> <strong>Referência(s):</strong>
+              <span id="refsDetails"></span> 
+            </label>
+          </div>
+
+          <hr>
+          <div class="m-3">
+            <label class="form-label text-start w-100"> <strong>Estado:</strong> 
+              ${
+                state
+                  ? '<span class="text-start m-1 w-100 text-success">Disponivel</span>'
+                  : '<span class="text-start m-1 w-100 text-danger">Indisponivel</span>'
+              }
+            </label>
+          </div>
+          
+          ${
+            state
+              ? ""
+              : `
+                  <hr>
+                  <div class="m-3">
+                    <label class="form-label text-start w-100"> <strong>Informações de atribuição:</strong> </label>
+                    <div class="m-1">
+                      <label class="form-label text-start w-100"> Nome do publicador: <span>${territorio.atribuicao.publicador}</span> </label>
+                      <label class="form-label text-start w-100"> Data de atribuição: <span>${territorio.atribuicao.data}</span> </label>
+                    </div>
+                  </div>`
+          }
+        </div>
+      </div>
+      `
+      );
+
+      territorio.referencias.forEach((ref) => {
+        _html.elemento(
+          "span",
+          ["class"],
+          ["badge text-dark border m-1 text-start bg-light"],
+          "refsDetails",
+          ref
+        );
+      });
+    }
+
+    if (type === "editar") {
+      let territorio = await Store.getDoc("territorios", id);
+
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "-1",
+          `#${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold m-auto mt-4">Território Nº ${territorioNum}</h5>
+          <hr>
+    
+          <div class="m-3">
+            <label for="mapaInput" class="text-start w-100"><strong>Mapa</strong></label>
+            <input type="file" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
+
+            <div class="form-floating">
+              <input type="number" class="form-control" value="${territorio.num}" id="numInput" placeholder="numero">
+              <label for="numInput">Número do território</label>
+            </div>
+
+            <label class="text-start w-100 mb-1"><strong>Referências</strong></label>
+            <div class="p-4 pt-1 pb-1" id="ref-edit"></div>
+            <div class="p-3 input-group input-group-sm w-100 pt-1 pb-1 ">
+                <input type="text" class="form-control w-75 m-0 form-control-sm" id="text-to-add-ref" />
+                <button class="btn btn-primary btn-sm w-25 m-0 " onclick="document.getElementById('text-to-add-ref').value ? _aux.addRef(document.getElementById('text-to-add-ref').value,${territorio.referencias.length}) : _aux.alertar('Texto vazio','warning')">Adicionar</button>                
+            </div>
+
+          </div>
+
+          <hr class="mb-0">
+          <div class="row m-0 p-0">
+            <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
+            <button type="button" class="col btn-conf-modal border-start">Ok</button>
+          </div>
+        </div>
+      </div>
+      `
+      );
+
+      territorio.referencias.forEach((ref, idx) => {
+        _html.elemento(
+          "div",
+          ["class", "id"],
+          ["row bg-light p-1 rounded mb-1", `ref-${idx}`],
+          "ref-edit",
+          `
+          <div class="col text-start">${ref}</div>
+          <button class="btn-close col-1" onclick="_html.removeRef('ref-${idx}')"></button>`
+        );
+      });
     }
 
     // listnerEvent.login();
@@ -522,7 +762,7 @@ const html_Comp = {
       [`navbar navbar-expand-lg navbar-dark bg-dark p-0`],
       "nav" /* div com id #nav */,
       `
-      <div class="container-fluid p-0 ">
+      <div class="container-fluid container p-0 ">
         <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
           style="font-size:2.3rem; padding: 0px 8px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
         <div class="p-2">
@@ -574,7 +814,7 @@ const html_Comp = {
           style="width: 23.66rem;"
           onclick="html_Comp.modal('opcoes',${territorio.num},${
           territorio.disponivel
-        })"
+        },'${territorio.ID}')"
           >
           <div class="card-body">
         
@@ -730,6 +970,11 @@ const _html = {
     label.setAttribute("for", `${id}`);
     label.innerHTML = v_Attrs[v_Attrs.length - 1];
     div.appendChild(label);
+  },
+
+  removeRef(ref_id) {
+    const refElement = document.querySelector(`#${ref_id}`);
+    refElement.remove();
   },
 };
 
@@ -1061,19 +1306,17 @@ const Store = {
     RoomsFB.id = dados.id;
   },
 
-  async getDoc(collection, doc, withId) {
+  async getDoc(collection, doc) {
     const db = firebase.firestore();
 
     const dbRef = db.collection(collection).doc(doc);
 
     const DOC = await dbRef.get().then((docc) => {
-      if (withId) {
-        let fich = {
-          ...docc.data(),
-          id: docc.id,
+      /*         let fich = {
+          ...docc.data()
         };
         return fich;
-      }
+ */
       // console.log(docc.data());
       return docc.data();
     });
@@ -1171,6 +1414,22 @@ const Storage = {
 const _aux = {
   Reload() {
     window.location.reload(false);
+  },
+
+  addRef(text, tamanho) {
+    _html.elemento(
+      "div",
+      ["class", "id"],
+      ["row bg-light p-1 rounded mb-1", `ref-${tamanho + 1}`],
+      "ref-edit",
+      `
+      <div class="col text-start">${text}</div>
+      <button class="btn-close col-1" onclick="_html.removeRef('ref-${
+        tamanho + 1
+      }')"></button>`
+    );
+
+    document.getElementById('text-to-add-ref').value = ""
   },
 
   async Navigate(url) {

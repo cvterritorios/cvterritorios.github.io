@@ -159,4 +159,5 @@ button.floattingButton:hover{
   margin: 0;
   border-radius: 0;
   border-style: none;
+  background: none;
 }
