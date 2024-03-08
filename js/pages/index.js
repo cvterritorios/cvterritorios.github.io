@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     `<input class="form-control" type="search" placeholder="Pesquisar" aria-label="Pesquisar">`
   );
 
-
   _html.elemento("div",["class"],["d-flex justify-content-between p-0 m-0 mb-3"],"conteudo",
   `
   <button type="button" class="btn btn-outline-secondary"
+    onclick="html_Comp.modal('novo')"
       style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .95rem;">
     Adicionar
   </button>
@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", async () => {
  `)
 
   html_Comp.bandeja();
+
+  console.log("Started...")
 });
 
 // document.addEventListener("keydown", (e) => {

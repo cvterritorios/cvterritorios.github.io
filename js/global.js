@@ -22,12 +22,24 @@ const Url = {
 //Territorio
 const Territorio = {
   ID: "",
-  area: "",
   disponivel: false,
+  mapa: "",
   num: "",
   num_casas: 0,
   observacao: "",
   referencias: [],
+  atribuicao: {},
+};
+
+const atribuicao_TRT = {
+  data: "",
+  publicador: "",
+};
+
+//Users
+const User = {
+  nome: "",
+  uid: "",
 };
 
 //--------------------------------------------------------------------------------------------
@@ -388,6 +400,7 @@ const html_Comp = {
           "id",
           "class",
           "data-bs-keyboard",
+          "data-bs-backdrop",
           "tabindex",
           "aria-labelledby",
           "aria-hidden",
@@ -396,8 +409,9 @@ const html_Comp = {
           `${type}Modal`,
           "modal fade",
           "false",
+          "static",
           "-1",
-          `#${type}ModalLabel`,
+          `${type}ModalLabel`,
           "true",
         ],
         "modal"
@@ -521,6 +535,7 @@ const html_Comp = {
           "id",
           "class",
           "data-bs-keyboard",
+          "data-bs-backdrop",
           "tabindex",
           "aria-labelledby",
           "aria-hidden",
@@ -529,8 +544,9 @@ const html_Comp = {
           `${type}Modal`,
           "modal fade",
           "false",
+          "static",
           "-1",
-          `#${type}ModalLabel`,
+          `${type}ModalLabel`,
           "true",
         ],
         "modal"
@@ -617,8 +633,10 @@ const html_Comp = {
           
           <hr>
           <div class="m-3">
-            <label class="form-label text-start w-100"> <strong>Mapa:</strong> 
-              <img class="form-label text-start w-100 m-1" src="#" />
+            <label class="picture" for="mapaInput">
+              <span id="picture-text">
+                <img />
+              </span>
             </label>
           </div>
 
@@ -678,6 +696,7 @@ const html_Comp = {
           "id",
           "class",
           "data-bs-keyboard",
+          "data-bs-backdrop",
           "tabindex",
           "aria-labelledby",
           "aria-hidden",
@@ -686,8 +705,9 @@ const html_Comp = {
           `${type}Modal`,
           "modal fade",
           "false",
+          "static",
           "-1",
-          `#${type}ModalLabel`,
+          `${type}ModalLabel`,
           "true",
         ],
         "modal"
@@ -709,10 +729,12 @@ const html_Comp = {
           <hr>
     
           <div class="m-3">
-            <label for="mapaInput" class="text-start w-100"><strong>Mapa</strong></label>
-            <input type="file" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
+            <label class="picture" for="mapaInput">
+              <span id="picture-text"></span>
+            </label>
+            <input type="file" accept=".jpg,.png,.jpeg" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
 
-            <div class="form-floating">
+            <div class="mt-2 form-floating">
               <input type="number" class="form-control" value="${territorio.num}" id="numInput" placeholder="numero">
               <label for="numInput">Número do território</label>
             </div>
@@ -721,7 +743,12 @@ const html_Comp = {
             <div class="p-4 pt-1 pb-1" id="ref-edit"></div>
             <div class="p-3 input-group input-group-sm w-100 pt-1 pb-1 ">
                 <input type="text" class="form-control w-75 m-0 form-control-sm" id="text-to-add-ref" />
-                <button class="btn btn-primary btn-sm w-25 m-0 " onclick="document.getElementById('text-to-add-ref').value ? _aux.addRef(document.getElementById('text-to-add-ref').value,${territorio.referencias.length}) : _aux.alertar('Texto vazio','warning')">Adicionar</button>                
+                <button class="btn btn-primary btn-sm w-25 m-0 " onclick="document.getElementById('text-to-add-ref').value ? _aux.addRef(document.getElementById('text-to-add-ref').value) : _aux.alertar('Texto vazio','warning')">Add</button>                
+            </div>
+
+            <div class="form-floating">
+              <textarea class="form-control" placeholder="Observação" id="obsInput" style="height: 100px"></textarea>
+              <label for="obsInput">Observações</label>
             </div>
 
           </div>
@@ -747,6 +774,85 @@ const html_Comp = {
           <button class="btn-close col-1" onclick="_html.removeRef('ref-${idx}')"></button>`
         );
       });
+      _func.imagePreview();
+    }
+
+    if (type === "novo") {
+      // let territorio = await Store.getDoc("territorios", id);
+
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "data-bs-backdrop",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "static",
+          "-1",
+          `${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold m-auto mt-4">Adicinar Território</h5>
+          <hr>
+    
+          <div class="m-3">
+            <label class="picture" for="mapaInput">
+              <span id="picture-text"></span>
+            </label>
+            <input type="file" accept=".jpg,.png,.jpeg" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
+
+            <div class="mt-2 form-floating">
+              <input type="number" class="form-control" id="numInput" placeholder="numero">
+              <label for="numInput">Número do território</label>
+            </div>
+
+            <label class="text-start w-100 mb-1"><strong>Referências</strong></label>
+            <div class="p-4 pt-1 pb-1" id="ref-edit"></div>
+            <div class="p-3 input-group input-group-sm w-100 pt-1 pb-1 ">
+                <input type="text" class="form-control w-75 m-0 form-control-sm" id="text-to-add-ref" />
+                <button class="btn btn-primary btn-sm w-25 m-0 " onclick="document.getElementById('text-to-add-ref').value ? _aux.addRef(document.getElementById('text-to-add-ref').value) : _aux.alertar('Texto vazio','warning')">Add</button>                
+            </div>
+
+            <div class="form-floating">
+              <textarea class="form-control" placeholder="Observação" id="obsInput" style="height: 100px"></textarea>
+              <label for="obsInput">Observações</label>
+            </div>
+
+          </div>
+
+          <hr class="mb-0">
+          <div class="row m-0 p-0">
+            <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
+            <button type="button" onclick="_func.addTerritorio()" class="col btn-conf-modal border-start">Ok</button>
+          </div>
+        </div>
+      </div>
+      `
+      );
+      _func.imagePreview();
     }
 
     // listnerEvent.login();
@@ -801,8 +907,6 @@ const html_Comp = {
       "bdj"
     );
 
-    html_Comp.modal;
-
     territorios.forEach((territorio, idx) => {
       _html.elemento(
         "div",
@@ -854,7 +958,7 @@ const html_Comp = {
       );
 
       territorio.referencias.forEach((referencia, index) => {
-        console.log(index);
+        // console.log(index);
         _html.elemento(
           "span",
           ["class"],
@@ -1248,18 +1352,14 @@ const Store = {
     const data = await dbRef.get().then((userData) => {
       dados = userData.docs.map((doc) => ({
         ...doc.data(),
-        id: doc.id,
       }));
 
       // console.log("dados", dados);
-      // const dados = userData.docs.map((doc) => doc.data());
       let array = [];
 
       dados.forEach((dt) => {
         array.push(dt);
       });
-
-      // console.log("array", array);
 
       return array;
     });
@@ -1295,36 +1395,19 @@ const Store = {
       });
   },
 
-  async setRoomAct(rid) {
-    // console.log(userUid);
-    const dados = await this.getDoc(`rooms`, rid, true);
-
-    RoomsFB.game = dados.game;
-    RoomsFB.name = dados.name;
-    RoomsFB.players = dados.players;
-    RoomsFB.state_game = dados.state_gameme;
-    RoomsFB.id = dados.id;
-  },
-
-  async getDoc(collection, doc) {
+  async getDoc(collection, docId) {
     const db = firebase.firestore();
 
-    const dbRef = db.collection(collection).doc(doc);
+    const dbRef = db.collection(collection).doc(docId);
 
-    const DOC = await dbRef.get().then((docc) => {
-      /*         let fich = {
-          ...docc.data()
-        };
-        return fich;
- */
-      // console.log(docc.data());
-      return docc.data();
+    const DOC = await dbRef.get().then((doc) => {
+      return doc.data();
     });
 
     return DOC;
   },
 
-  async getDocWhere(collection, where, who) {
+  async getDocWhere(collection, where) {
     const db = firebase.firestore();
     let dados = "";
 
@@ -1335,26 +1418,11 @@ const Store = {
     const data = await dbRef.get().then((userData) => {
       dados = userData.docs.map((doc) => ({
         ...doc.data(),
-        id: doc.id,
       }));
 
       return dados[0];
     });
 
-    // console.log(data)
-    if (who) {
-      switch (who) {
-        case "id":
-          return data.id;
-          break;
-        case "name":
-          return data.name;
-          break;
-
-        default:
-          break;
-      }
-    }
     return data;
   },
 
@@ -1375,10 +1443,11 @@ const Store = {
 
     const dbRef = db.collection(collection);
 
-    await dbRef.add(data).then(() => {
+    let id = await dbRef.add(data).then(() => {
       console.log(data);
-      return true;
+      return data.id;
     });
+    return id
   },
 
   async deleteDoc(collection, doc) {
@@ -1404,8 +1473,32 @@ const Storage = {
     this.stRef = this.st.ref();
   },
 
-  console() {
-    console.log(this.st);
+  async getTerritorio(territorio) {
+    this.ini();
+    // console.log(this.st);
+    await this.stRef
+      .child(`territorios/${territorio}.png`)
+      .getMetadata()
+      .then((meta) => {
+        console.log(meta);
+      });
+  },
+
+  async setTerritorio(territorio, file) {
+    this.ini();
+    // console.log(this.st);
+    const Url = await this.stRef
+      .child(`territorios/${territorio}.png`)
+      .put(file)
+      .then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((url) => {
+          console.log("Uploaded a file!", url);
+          return url;
+        });
+      });
+      console.log( Url);
+
+    return Url;
   },
 
   //   stRef.child('banner/ping-pong.webm').getMetadata().then((meta)=>{console.log(meta)})
@@ -1416,20 +1509,30 @@ const _aux = {
     window.location.reload(false);
   },
 
-  addRef(text, tamanho) {
-    _html.elemento(
-      "div",
-      ["class", "id"],
-      ["row bg-light p-1 rounded mb-1", `ref-${tamanho + 1}`],
-      "ref-edit",
-      `
-      <div class="col text-start">${text}</div>
-      <button class="btn-close col-1" onclick="_html.removeRef('ref-${
-        tamanho + 1
-      }')"></button>`
-    );
+  addRef(text) {
+    let num = 0;
+    while (1) {
+      let refe = document.querySelector(`#ref-${num}`);
 
-    document.getElementById('text-to-add-ref').value = ""
+      if (!refe) {
+        console.log("cabooooo");
+
+        _html.elemento(
+          "div",
+          ["class", "id"],
+          ["row bg-light p-1 rounded mb-1", `ref-${num}`],
+          "ref-edit",
+          `
+          <div class="col text-start">${text}</div>
+          <button class="btn-close col-1" onclick="_html.removeRef('ref-${num}')"></button>`
+        );
+        document.getElementById("text-to-add-ref").value = "";
+
+        return;
+      }
+
+      num = num + 1;
+    }
   },
 
   async Navigate(url) {
@@ -1541,6 +1644,82 @@ const _aux = {
     if (loadings.length) {
       loadings[0].remove();
     }
+  },
+};
+
+const _func = {
+  async addTerritorio() {
+    let file = document.querySelector("#mapaInput");
+    let number = document.querySelector("#numInput").value;
+    let obs = document.querySelector("#obsInput").value;
+    let referencias = [];
+    let num = 0;
+
+    // _aux.alertar("indo","info")
+    while (1) {
+      console.log("...");
+      let refe = document.querySelector(`#ref-${num}>div`);
+
+      if (!refe) {
+        break;
+      }
+
+      referencias.push(refe.innerHTML);
+
+      num += 1;
+    }
+
+    if (file && number && referencias) {
+      const ST_url = await Storage.setTerritorio(number, file.files[0]);
+      console.log(ST_url);
+      return;
+      Territorio.mapa = ST_url;
+      Territorio.num = number;
+      Territorio.observacao = obs;
+      Territorio.referencias = referencias;
+      console.log(Territorio);
+
+      const ID = await Store.addDoc("territorios", Territorio);
+
+      Territorio.ID = ID;
+      console.log(Territorio);
+
+      if (await Store.updateDoc("territorios", ID, Territorio))
+        console.log(Territorio, "done"); /* _aux.Reload() */
+    } else {
+      _aux.alertar("Precisa preencher todos os campos", "warning");
+    }
+  },
+
+  imagePreview() {
+    console.log("Euuuh");
+    let inputFile = document.querySelector("#mapaInput");
+    let pictureTxt = document.querySelector("#picture-text");
+    let text = "Escolha a sua imagem";
+
+    pictureTxt.innerHTML = text;
+
+    inputFile.addEventListener("change", (e) => {
+      let inputTarget = e.target;
+      let file = inputTarget.files[0];
+
+      if (file) {
+        pictureTxt.innerHTML = "";
+
+        const reader = new FileReader();
+
+        reader.addEventListener("load", (e) => {
+          const readerTarget = e.target;
+
+          _html.elemento("img", ["src"], [readerTarget.result], "picture-text");
+        });
+
+        reader.readAsDataURL(file);
+      } else {
+        pictureTxt.innerHTML = text;
+      }
+      console.log(file);
+    });
   },
 };
 
