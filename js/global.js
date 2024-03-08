@@ -22,10 +22,9 @@ const Url = {
 //Territorio
 const Territorio = {
   ID: "",
-  disponivel: false,
+  disponivel: true,
   mapa: "",
   num: "",
-  num_casas: 0,
   observacao: "",
   referencias: [],
   atribuicao: {},
@@ -384,16 +383,16 @@ const html_Comp = {
     document.getElementById("auth-modal").click();
   },
 
-  async modal(type, territorioNum, state, id) {
+  async modal(type, territorioNum, state, ID) {
     // opcoes - atribuir/desatribuir, detalhes, editar, eliminar
     // confirmação - if message contain "eliminar/atribuir/desatribuir"
     // detalhes
     // editar
-    console.log(type, territorioNum, state, id);
+    console.log(type, territorioNum, state, ID);
     let closeOp = document.getElementById("modal-opcoes-close");
     closeOp ? closeOp.click() : "";
     const confirm = (type, num, message) => {
-      console.log(type, num, message);
+      // console.log(type, num, message);
       _html.elemento(
         "div",
         [
@@ -439,7 +438,11 @@ const html_Comp = {
           <hr class="mb-0">
           <div class="row m-0 p-0">
             <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
-            <button type="button" class="col btn-conf-modal border-start">Ok</button>
+            <button type="button" ${
+              type == "eliminar"
+                ? `onclick="_func.delTerritorio('${ID}')"`
+                : `onclick="_func.dssTerritorio('${ID}')"`
+            } class="col btn-conf-modal border-start">Ok</button>
           </div>
         </div>
       </div>
@@ -505,7 +508,7 @@ const html_Comp = {
           <h6 class="fw m-auto btn-opcoes"
             onclick="html_Comp.modal('${
               state ? "atribuir" : "desatribuir"
-            }',${territorioNum},${state},'${id}')">
+            }',${territorioNum},${state},'${ID}')">
               ${
                 state
                   ? '<span class="text-success">Atribuir</span>'
@@ -514,13 +517,13 @@ const html_Comp = {
             </h6>
 
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('detalhes',${territorioNum},${state},'${id}')">Detalhes</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('detalhes',${territorioNum},${state},'${ID}')">Detalhes</h6>
           
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('editar',${territorioNum},${state},'${id}')">Editar</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('editar',${territorioNum},${state},'${ID}')">Editar</h6>
           
           <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('eliminar',${territorioNum},${state},'${id}')">Eliminar</h6>
+          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('eliminar',${territorioNum},${state},'${ID}')">Eliminar</h6>
         
         </div>
       </div>
@@ -594,7 +597,7 @@ const html_Comp = {
     }
 
     if (type === "detalhes") {
-      let territorio = await Store.getDoc("territorios", id);
+      let territorio = await Store.getDoc("territorios", ID);
 
       _html.elemento(
         "div",
@@ -635,7 +638,7 @@ const html_Comp = {
           <div class="m-3">
             <label class="picture" for="mapaInput">
               <span id="picture-text">
-                <img />
+                <img class="border img-detail" src="${territorio.mapa}"/>
               </span>
             </label>
           </div>
@@ -688,7 +691,7 @@ const html_Comp = {
     }
 
     if (type === "editar") {
-      let territorio = await Store.getDoc("territorios", id);
+      let territorio = await Store.getDoc("territorios", ID);
 
       _html.elemento(
         "div",
@@ -730,7 +733,9 @@ const html_Comp = {
     
           <div class="m-3">
             <label class="picture" for="mapaInput">
-              <span id="picture-text"></span>
+              <span id="picture-text">
+                <img class="border" src="${territorio.mapa}"/>
+              </span>
             </label>
             <input type="file" accept=".jpg,.png,.jpeg" class="form-control mt-1 mb-3 form-control-sm" id="mapaInput" placeholder="Your file">
 
@@ -910,8 +915,8 @@ const html_Comp = {
     territorios.forEach((territorio, idx) => {
       _html.elemento(
         "div",
-        ["class"],
-        ["col-md-auto p-0"],
+        ["class", "id"],
+        ["col-md-auto p-0", `${territorio.ID}`],
         "linha",
         `
         <div class="card terr border border-end-0 border-start-0 rounded-0" 
@@ -925,12 +930,11 @@ const html_Comp = {
             <div class="container text-center">
               <div class="row">
                 
-                <div class="col-3 pt-2 bg-success">
-                  One of colum
+                <div class="col-3 bg-success p-0 d-flex">
+                  <img class="img-thumb m-0" src="${territorio.mapa}">
                 </div>
                 
                 <div class="col fs-6">
-                  
                   
                   <div class="d-flex justify-content-between " style="width:100%">
                     <div class=" text-start">Território Nº ${
@@ -1443,11 +1447,11 @@ const Store = {
 
     const dbRef = db.collection(collection);
 
-    let id = await dbRef.add(data).then(() => {
-      console.log(data);
-      return data.id;
+    let id = await dbRef.add(data).then((new_data) => {
+      console.log(new_data);
+      return new_data.id;
     });
-    return id
+    return id;
   },
 
   async deleteDoc(collection, doc) {
@@ -1473,7 +1477,7 @@ const Storage = {
     this.stRef = this.st.ref();
   },
 
-  async getTerritorio(territorio) {
+  async getImage(territorio) {
     this.ini();
     // console.log(this.st);
     await this.stRef
@@ -1484,21 +1488,34 @@ const Storage = {
       });
   },
 
-  async setTerritorio(territorio, file) {
+  async setImage(territorio, file) {
     this.ini();
     // console.log(this.st);
-    const Url = await this.stRef
+    let link = await this.stRef
       .child(`territorios/${territorio}.png`)
       .put(file)
-      .then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((url) => {
-          console.log("Uploaded a file!", url);
+      .then(async (snapshot) => {
+        let Url = await snapshot.ref.getDownloadURL().then((url) => {
+          console.log("Uploaded a file!", "success");
           return url;
         });
+        return Url;
       });
-      console.log( Url);
+    return link;
+  },
 
-    return Url;
+  async delImage(territorio) {
+    this.ini();
+    // console.log(this.st);
+    let isDel = await this.stRef
+      .child(`territorios/${territorio}.png`)
+      .delete()
+      .then(() => {
+        // File deleted successfully
+        return true;
+      });
+
+    return isDel;
   },
 
   //   stRef.child('banner/ping-pong.webm').getMetadata().then((meta)=>{console.log(meta)})
@@ -1648,6 +1665,16 @@ const _aux = {
 };
 
 const _func = {
+  done(message) {
+    _aux.alertar(message, "success");
+
+    console.log(message, "DONE!");
+
+    setTimeout(() => {
+      _aux.Reload();
+    }, 1000);
+  },
+
   async addTerritorio() {
     let file = document.querySelector("#mapaInput");
     let number = document.querySelector("#numInput").value;
@@ -1664,40 +1691,48 @@ const _func = {
         break;
       }
 
-      referencias.push(refe.innerHTML);
+      if (refe) referencias.push(refe.innerHTML);
 
       num += 1;
     }
 
-    if (file && number && referencias) {
-      const ST_url = await Storage.setTerritorio(number, file.files[0]);
+    // console.log("file:",file.files[0],"\nnumber:",number,"\nreferencias:",referencias);
+
+    if (file.files[0] && number && referencias.length != 0) {
+      const ST_url = await Storage.setImage(number, file.files[0]);
       console.log(ST_url);
-      return;
+
       Territorio.mapa = ST_url;
       Territorio.num = number;
       Territorio.observacao = obs;
       Territorio.referencias = referencias;
-      console.log(Territorio);
 
       const ID = await Store.addDoc("territorios", Territorio);
+      console.log(ID);
 
       Territorio.ID = ID;
-      console.log(Territorio);
+      // console.log(Territorio);
 
-      if (await Store.updateDoc("territorios", ID, Territorio))
-        console.log(Territorio, "done"); /* _aux.Reload() */
+      if (await Store.updateDoc("territorios", ID, Territorio)) {
+        this.done("Terrirório adicionado");
+      }
     } else {
-      _aux.alertar("Precisa preencher todos os campos", "warning");
+      if (file.files[0] == undefined)
+        _aux.alertar("Por favor selecione a imagem do mapa", "warning");
+      if (number == "")
+        _aux.alertar("Por favor informe o número do território", "warning");
+      if (referencias.length <= 0)
+        _aux.alertar("Por favor adicione pelo menos uma referência", "warning");
     }
   },
 
   imagePreview() {
-    console.log("Euuuh");
+    // console.log("Euuuh");
     let inputFile = document.querySelector("#mapaInput");
     let pictureTxt = document.querySelector("#picture-text");
     let text = "Escolha a sua imagem";
 
-    pictureTxt.innerHTML = text;
+    // pictureTxt.innerHTML = text;
 
     inputFile.addEventListener("change", (e) => {
       let inputTarget = e.target;
@@ -1718,8 +1753,25 @@ const _func = {
       } else {
         pictureTxt.innerHTML = text;
       }
-      console.log(file);
+      // console.log(file);
     });
+  },
+
+  dssTerritorio(_id) {
+    console.log("Desatribuir", _id);
+  },
+
+  async delTerritorio(_id) {
+    console.log("Eliminar", _id);
+
+    const terr = await Store.getDoc("territorios", _id);
+
+    //Apagar imagem
+    if (await Storage.delImage(terr.num)) {
+      if (await Store.deleteDoc("territorios", _id)) {
+        this.done("Território eliminado");
+      }
+    }
   },
 };
 
