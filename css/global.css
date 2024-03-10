@@ -201,3 +201,11 @@ button.floattingButton:hover{
 .img-detail:hover{
   transform: scale(1.1);
 }
+
+#id{
+  display: none;
+}
+
+#select-pubs>option{
+  font-size: 1.2rem;
+}
