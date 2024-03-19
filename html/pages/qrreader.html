@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto Sans"
+      rel="stylesheet"
+    />
+    <title></title>
+
+    <!-- BootStrap Js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- BootStrap Css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.13.0/firebase-app-compat.js"></script>
+
+    <script
+      defer
+      type="module"
+      src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"
+    ></script>
+
+    <script
+      defer
+      type="module"
+      src="https://www.gstatic.com/firebasejs/9.13.0/firebase-firestore-compat.js"
+    ></script>
+
+    <!-- My Css -->
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../../css/pages/index.css" />
+  </head>
+  <body class="bg-secondary">
+    <!-- Barra de Navegação -->
+    <div id="nav">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-0">
+        <div class="container-fluid container p-0">
+          <a
+            class="navbar-brand"
+            ondblclick="html_Comp.authModal('show')"
+            style="
+              font-size: 2.3rem;
+              padding: 0px 8px 0px 8px;
+              background-color: #4a6da7;
+              cursor: pointer;
+            "
+            onclick="_aux.Navigate('/index.html')"
+            >TC</a
+          >
+          <div class="p-2">
+            <button
+              class="btn btn-dark p-1"
+              onclick="html_Comp.modal('qr')"
+              type="button"
+            >
+              flash
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Conteúdo -->
+    <div id="conteudo">
+      <div
+        class="d-flex justify-content-center align-items-center"
+        style="height: 80vh"
+      >
+        <div class="h-50">
+          <div class="text-center">
+            <a id="btn-scan-qr">
+              <img
+                src="../../media/qrcode.png"
+                class="img-fluid text-center"
+                width="300"
+                onclick="iniciarCamera()"
+              />
+            </a>
+            <canvas
+              hidden=""
+              width="50"
+              id="qr-canvas"
+              class="img-fluid"
+            ></canvas>
+            <h5 class="text-center mt-3">Posicione o código na moldura</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-qr" class="fixed-bottom bg-dark text-center p-2">
+      <a
+        class="btn btn-dark"
+        onclick="desligarCamera();_aux.Navigate('/index.html')"
+        >Voltar</a
+      >
+    </div>
+
+    <!-- Alert -->
+    <div id="alert"></div>
+    <!-- My Js -->
+    <script defer src="../../js/qrCode.min.js"></script>
+    <script src="../../js/pages/qrreader.js"></script>
+  </body>
+</html>
