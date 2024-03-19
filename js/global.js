@@ -9,7 +9,7 @@ const today = {
   ano: dt.getFullYear(),
 
   date() {
-    return this.ano + "-" + this.mes + "-" + this.dia;
+    return this.dia + "-" + this.mes + "-" + this.ano;
   },
 };
 
@@ -44,6 +44,7 @@ const Publicador = {
   nomeCompleto: "",
   primeiroNome: "",
   ultimoNome: "",
+  disponivel: true,
 };
 //Users
 const User = {
@@ -401,59 +402,64 @@ const html_Comp = {
     /*     primeiroNome = _aux.getNome("primeiro", pub_name);
     ultimoNome = _aux.getNome("ultimo", pub_name);
  */
-    const pub_fst_Name = await Store.getCollection("publicadores", [
-      "primeiroNome",
-      "==",
-      primeiroNome,
-    ]);
+    if (!primeiroNome) {
+      _aux.alertar("Adicione o nome do publicador", "warning", true);
+    } else {
+      const pub_fst_Name = await Store.getCollection("publicadores", [
+        "primeiroNome",
+        "==",
+        primeiroNome,
+      ]);
 
-    console.log(pub_fst_Name);
+      console.log(pub_fst_Name);
 
-    //Button trigger modal
-    _html.elemento(
-      "button",
-      ["id", "type", "class", "data-bs-toggle", "data-bs-target"],
-      [
-        `${type}-modal`,
+      //Button trigger modal
+      _html.elemento(
         "button",
-        "btn btn-primary invisible",
+        ["id", "type", "class", "data-bs-toggle", "data-bs-target"],
+        [
+          `${type}-modal`,
+          "button",
+          "btn btn-primary invisible",
+          "modal",
+          `#${type}Modal`,
+        ],
         "modal",
-        `#${type}Modal`,
-      ],
-      "modal",
-      `${type} Modal`
-    );
+        `${type} Modal`
+      );
 
-    _html.elemento(
-      "div",
-      [
-        "id",
-        "class",
-        "data-bs-keyboard",
-        "data-bs-backdrop",
-        "tabindex",
-        "aria-labelledby",
-        "aria-hidden",
-      ],
-      [
-        `${type}Modal`,
-        "modal fade",
-        "false",
-        "static",
-        "-1",
-        `${type}ModalLabel`,
-        "true",
-      ],
-      "modal"
-    );
-
-    if (pub_fst_Name.length > 0) {
       _html.elemento(
         "div",
-        ["class"],
-        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
-        `${type}Modal`,
-        `
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "data-bs-backdrop",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "static",
+          "-1",
+          `${type}ModalLabel`,
+          "true",
+        ],
+        "modal"
+      );
+
+      if (pub_fst_Name.length > 0) {
+        _html.elemento(
+          "div",
+          ["class"],
+          [
+            "modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable",
+          ],
+          `${type}Modal`,
+          `
         <div
           id="modal${type}-content"
           class="modal-content rounded-5 shadow pb-0"
@@ -461,12 +467,16 @@ const html_Comp = {
         >
           <div id="modal${type}-body" class="modal-body text-center p-0 ">
             <h5 class="fw-bold m-auto mt-4">Selecione o Publicador</h5>
-            <hr>
+            <hr class="mb-0 pb-0">
       
-            <select id="select-pubs" class="form-select" multiple aria-label="Selecionar publicador">
+            <select id="select-pubs" size="${
+              pub_fst_Name.length + 1
+            }" class="form-select p-0" aria-label="Selecionar publicador">
+              <option selected value="">Selecione o Publicador</option>
             </select>
+            <button type="button" class="btn btn-secondary d-flex m-1" onclick="html_Comp.modal('add_pub',${num})">Adicionar Novo</button>
 
-            <hr class="mb-0">
+            <hr class="mb-0 mt-0 pt-0">
             <div class="row m-0 p-0">
               <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
               <button type="button" onclick="_func.attTerritorio('${id}')" class="col btn-conf-modal border-start">Ok</button>
@@ -474,25 +484,27 @@ const html_Comp = {
           </div>
         </div>
         `
-      );
-
-      pub_fst_Name.forEach((publicador) => {
-        // console.log(index);
-        _html.elemento(
-          "option",
-          ["value"],
-          [`${publicador.ID}`],
-          "select-pubs",
-          `${publicador.nomeCompleto}`
         );
-      });
-    } else {
-      _html.elemento(
-        "div",
-        ["class"],
-        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
-        `${type}Modal`,
-        `
+
+        pub_fst_Name.forEach((publicador) => {
+          // console.log(index);
+          _html.elemento(
+            "option",
+            ["value"],
+            [`${publicador.ID}`],
+            "select-pubs",
+            `${publicador.nomeCompleto}`
+          );
+        });
+      } else {
+        _html.elemento(
+          "div",
+          ["class"],
+          [
+            "modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable",
+          ],
+          `${type}Modal`,
+          `
         <div
           id="modal${type}-content"
           class="modal-content rounded-5 shadow pb-0"
@@ -514,10 +526,11 @@ const html_Comp = {
           </div>
         </div>
         `
-      );
-    }
+        );
+      }
 
-    document.getElementById(`${type}-modal`).click();
+      document.getElementById(`${type}-modal`).click();
+    }
   },
 
   async modal(type, territorioNum, state, ID) {
@@ -637,12 +650,12 @@ const html_Comp = {
         class="modal-content rounded-5 shadow"
         style="background-color: white; color: black"
       >
-        <div id="modal${type}-body" class="modal-body text-center">
+        <div id="modal${type}-body" class="modal-body text-center pb-1">
           <h5 class="fw-bold m-auto">Território Nº ${territorioNum}</h5>
           <button type="button" class="btn-close m-0 p-0 float-end invisible" id="modal-${type}-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
-          <hr>
-          <h6 class="fw m-auto btn-opcoes"
+          <hr class="mt-3 mb-0 w-100">
+          <h6 class="fw m-auto btn-opcoes pt-3 pb-3"
             onclick="html_Comp.modal('${
               state ? "atribuir" : "desatribuir"
             }',${territorioNum},${state},'${ID}')">
@@ -653,14 +666,14 @@ const html_Comp = {
               }
             </h6>
 
-          <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('detalhes',${territorioNum},${state},'${ID}')">Detalhes</h6>
+          <hr class="mt-0 mb-0 w-100">
+          <h6 class="fw m-auto btn-opcoes pt-3 pb-3" onclick="html_Comp.modal('detalhes',${territorioNum},${state},'${ID}')">Detalhes</h6>
           
-          <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('editar',${territorioNum},${state},'${ID}')">Editar</h6>
+          <hr class="mt-0 mb-0 w-100">
+          <h6 class="fw m-auto btn-opcoes pt-3 pb-3" onclick="html_Comp.modal('editar',${territorioNum},${state},'${ID}')">Editar</h6>
           
-          <hr>
-          <h6 class="fw m-auto btn-opcoes" onclick="html_Comp.modal('eliminar',${territorioNum},${state},'${ID}')">Eliminar</h6>
+          <hr class="mt-0 mb-0 w-100">
+          <h6 class="fw m-auto btn-opcoes pt-3 pb-3" onclick="html_Comp.modal('eliminar',${territorioNum},${state},'${ID}')">Eliminar</h6>
         
         </div>
       </div>
@@ -714,7 +727,7 @@ const html_Comp = {
           <hr class="mb-0">
           <div class="row m-0 p-0">
             <button type="button" class="col text-danger btn-conf-modal border-end" data-bs-dismiss="modal" aria-label="Close">Cancelar</button>
-            <button type="button" onclick="_func.addPublicador(document.getElementById('add_pub_name').value,${territorioNum})" class="col btn-conf-modal border-start">Ok</button>
+            <button type="button" onclick="_func.addPublicador(document.getElementById('add_pub_name').value,${territorioNum})" class="col btn-modal btn-conf-modal border-start">Ok</button>
           </div>
         </div>
       </div>
@@ -871,9 +884,9 @@ const html_Comp = {
                   <hr>
                   <div class="m-3">
                     <label class="form-label text-start w-100"> <strong>Informações de atribuição:</strong> </label>
-                    <div class="m-1">
-                      <label class="form-label text-start w-100"> Nome do publicador: <span>${territorio.atribuicao.publicador.nome}</span> </label>
-                      <label class="form-label text-start w-100"> Data de atribuição: <span>${territorio.atribuicao.data}</span> </label>
+                    <div class="m-1 att-details">
+                      <label class="form-label text-start w-100"> <strong>Publicador:</strong> <span>${territorio.atribuicao.publicador.nome}</span> </label>
+                      <label class="form-label text-start w-100"> <strong>Data:</strong> <span>${territorio.atribuicao.data}</span> </label>
                     </div>
                   </div>`
           }
@@ -1071,6 +1084,7 @@ const html_Comp = {
 
   navBar() {
     let color = "white";
+
     //Nav
     _html.elemento(
       "nav",
@@ -1082,7 +1096,7 @@ const html_Comp = {
         <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
           style="font-size:2.3rem; padding: 0px 8px 0px 8px; background-color:#4A6DA7;" href="#">TC</a>
         <div class="p-2">
-          <button class="btn btn-outline-light p-1" type="button">
+          <button class="btn btn-dark p-1" onclick="_aux.Navigate('/html/pages/qrreader.html')" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" 
             width="28px" height="28px" class="ionicon" 
             viewBox="0 0 512 512">
@@ -1344,21 +1358,6 @@ const _Auth = {
     }
   },
 
-  //Login
-  loginAnom() {
-    firebase
-      .auth()
-      .signInAnonymously()
-      .then(() => {
-        // Signed in..
-        _aux.Reload();
-      })
-      .catch((error) => {
-        this.validaAuth(error.code);
-        // _ _ _ // ... // --- // ''' //
-      });
-  },
-
   //Isso é auto-explicativo, mas tem comentários dentro
   login() {
     //Pegar valores do formulario
@@ -1616,6 +1615,16 @@ const Store = {
     Territorio.referencias = old.referencias;
   },
 
+  async getOldPublicador(id) {
+    const old = await this.getDoc("publicadores", id);
+
+    Publicador.ID = old.ID;
+    Publicador.nomeCompleto = old.nomeCompleto;
+    Publicador.disponivel = old.disponivel;
+    Publicador.primeiroNome = old.primeiroNome;
+    Publicador.ultimoNome = old.ultimoNome;
+  },
+
   async getDoc(collection, docId) {
     const db = firebase.firestore();
 
@@ -1802,20 +1811,6 @@ const _aux = {
   },
 
   async Navigate(url) {
-    let last = "";
-    let urlx = "";
-
-    if (!window.location.href.includes("/html")) {
-      urlx = "/index.html";
-    } else {
-      urlx = _aux.sliceTxt(window.location.href, "/html");
-    }
-    last = await DataB.set("users/" + User.username + "/last_page", urlx);
-
-    if (!last) {
-      return;
-    }
-
     setTimeout(() => {
       window.location.href = url;
       // console.log("Mudado");
@@ -1844,7 +1839,11 @@ const _aux = {
         }
       }
 
-      html_Comp.navBar();
+      if (Url.path.includes("qrreader.html")) {
+        html_Comp.navBar(true);
+      } else {
+        html_Comp.navBar();
+      }
     });
   },
 
@@ -1854,31 +1853,111 @@ const _aux = {
   //                            success - para alertas de sucesso
   //                            warning - para alertas de aviso
   //                            danger - para alertas de erro
-  alertar(message, type) {
+  alertar(message, type, alert) {
     let Pai = document.querySelector(`#alert`);
 
     // console.log(Pai);
-    let wrapper = document.createElement("div");
-    wrapper.setAttribute("class", `alert alert-${type} mt-3 alert-dismissible`);
-    wrapper.setAttribute("role", "alert");
 
-    let mensagem = document.createElement("div");
-    mensagem.innerHTML = `${message}`;
+    if (alert) {
+      let wrapper = document.createElement("div");
+      wrapper.setAttribute(
+        "class",
+        `alert alert-${type} mt-3 alert-dismissible`
+      );
+      wrapper.setAttribute("role", "alert");
 
-    wrapper.appendChild(mensagem);
+      let mensagem = document.createElement("div");
+      mensagem.innerHTML = `${message}`;
 
-    let btn = document.createElement("button");
-    btn.setAttribute("type", "button");
-    btn.setAttribute("class", "btn-close visually-hidden");
-    btn.setAttribute("data-bs-dismiss", "alert");
-    btn.setAttribute("aria-label", "Close");
+      wrapper.appendChild(mensagem);
 
-    wrapper.appendChild(btn);
-    Pai.appendChild(wrapper);
+      let btn = document.createElement("button");
+      btn.setAttribute("type", "button");
+      btn.setAttribute("class", "btn-close visually-hidden");
+      btn.setAttribute("data-bs-dismiss", "alert");
+      btn.setAttribute("aria-label", "Close");
 
-    setTimeout(() => {
-      btn.click();
-    }, [5000]);
+      wrapper.appendChild(btn);
+      Pai.appendChild(wrapper);
+
+      setTimeout(() => {
+        btn.click();
+      }, [5000]);
+    } else {
+      //Button trigger modal
+      _html.elemento(
+        "button",
+        ["id", "type", "class", "data-bs-toggle", "data-bs-target"],
+        [
+          `${type}-modal`,
+          "button",
+          "btn btn-primary invisible",
+          "modal",
+          `#${type}Modal`,
+        ],
+        "alert",
+        `${type} Modal`
+      );
+
+      _html.elemento(
+        "div",
+        [
+          "id",
+          "class",
+          "data-bs-keyboard",
+          "data-bs-backdrop",
+          "tabindex",
+          "aria-labelledby",
+          "aria-hidden",
+        ],
+        [
+          `${type}Modal`,
+          "modal fade",
+          "false",
+          "static",
+          "-1",
+          `${type}ModalLabel`,
+          "true",
+        ],
+        "alert"
+      );
+
+      _html.elemento(
+        "div",
+        ["class"],
+        ["modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"],
+        `${type}Modal`,
+        `
+      <div
+        id="modal${type}-content"
+        class="modal-content rounded-5 shadow pb-0"
+        style="background-color: white; color: black"
+      >
+        <div id="modal${type}-body" class="modal-body text-center p-0 ">
+          <h5 class="fw-bold bgg-${type} m-auto mb-0 pb-3 pt-4">Alerta</h5>
+          <hr class="mt-0 pt-0">
+    
+          <div class="m-3">
+            <label class="form-label text-start w-100">${message}</label>
+          </div>
+
+          <hr class="mb-0">
+          <div class="m-0 p-0">
+            <button type="button" onclick="_aux.Reload()" class="btn-conf-modal w-100 btn-modal">OK</button>
+            <button type="button" class="btn btn-danger invisible" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      `
+      );
+
+      /* Pai.appendChild(modal);
+
+      setTimeout(() => {
+        btn.click();
+      }, [5000]); */
+      document.getElementById(`${type}-modal`).click();
+    }
   },
 
   // Loading
@@ -1923,7 +2002,7 @@ const _func = {
       () => {
         _aux.Reload();
       },
-      ms ? ms : 1000
+      ms ? ms : 1300
     );
   },
 
@@ -1951,6 +2030,17 @@ const _func = {
     // console.log("file:",file.files[0],"\nnumber:",number,"\nreferencias:",referencias);
 
     if (file.files[0] && number && referencias.length != 0) {
+      const exist = await Store.getDocWhere("territorios", [
+        "num",
+        "==",
+        `${number}`,
+      ]);
+
+      if (exist) {
+        _aux.alertar("Já existe um território com este número", "danger", true);
+        return;
+      }
+
       const ST_url = await Storage.setImage(number, file.files[0]);
       console.log(ST_url);
 
@@ -1970,11 +2060,19 @@ const _func = {
       }
     } else {
       if (file.files[0] == undefined)
-        _aux.alertar("Por favor selecione a imagem do mapa", "warning");
+        _aux.alertar("Por favor selecione a imagem do mapa", "warning", true);
       if (number == "")
-        _aux.alertar("Por favor informe o número do território", "warning");
+        _aux.alertar(
+          "Por favor informe o número do território",
+          "warning",
+          true
+        );
       if (referencias.length <= 0)
-        _aux.alertar("Por favor adicione pelo menos uma referência", "warning");
+        _aux.alertar(
+          "Por favor adicione pelo menos uma referência",
+          "warning",
+          true
+        );
     }
   },
 
@@ -2014,7 +2112,7 @@ const _func = {
 
         Territorio.mapa = ST_url;
       } else {
-        _aux.alertar("Por favor selecione a imagem do mapa", "warning");
+        _aux.alertar("Por favor selecione a imagem do mapa", "warning", true);
         return;
       }
 
@@ -2027,9 +2125,17 @@ const _func = {
       }
     } else {
       if (number == "")
-        _aux.alertar("Por favor informe o número do território", "warning");
+        _aux.alertar(
+          "Por favor informe o número do território",
+          "warning",
+          true
+        );
       if (referencias.length <= 0)
-        _aux.alertar("Por favor adicione pelo menos uma referência", "warning");
+        _aux.alertar(
+          "Por favor adicione pelo menos uma referência",
+          "warning",
+          true
+        );
     }
   },
 
@@ -2046,9 +2152,27 @@ const _func = {
       }
     });
 
+    if (pubId == "") {
+      _aux.alertar("Selecione um publicador", "warning", true);
+      return;
+    }
+
+    const pub = await Store.getDoc("publicadores", pubId);
+
+    if (pub.disponivel == false) {
+      _aux.alertar("Este publicador já tem território", "danger");
+      return;
+    }
+
     atribuicao_TRT.data = today.date();
     atribuicao_TRT.publicador.nome = nomeCompleto;
     atribuicao_TRT.publicador.pid = pubId;
+
+    Publicador.ID = pub.ID;
+    Publicador.nomeCompleto = pub.nomeCompleto;
+    Publicador.primeiroNome = pub.primeiroNome;
+    Publicador.ultimoNome = pub.ultimoNome;
+    Publicador.disponivel = false;
 
     await Store.getOldTerritorio(idTrt);
 
@@ -2058,12 +2182,14 @@ const _func = {
     console.log(Territorio);
 
     if (await Store.updateDoc("territorios", Territorio.ID, Territorio)) {
-      this.done(
-        `Terrirório Nº ${
-          Territorio.num
-        } atribuido ao publicador ${nomeCompleto} na data de ${today.date()}`,
-        5000
-      );
+      if (await Store.updateDoc("publicadores", Publicador.ID, Publicador)) {
+        this.done(
+          `Terrirório Nº ${
+            Territorio.num
+          } atribuido ao publicador ${nomeCompleto} na data de ${today.date()}`,
+          5000
+        );
+      }
     }
   },
 
@@ -2072,8 +2198,19 @@ const _func = {
     Publicador.primeiroNome = _aux.getNome("primeiro", nome);
     Publicador.ultimoNome = _aux.getNome("ultimo", nome);
 
-    console.log(nome);
-    console.log(Publicador);
+    const exist = await Store.getDocWhere("publicadores", [
+      "nomeCompleto",
+      "==",
+      nome,
+    ]);
+
+    if (exist) {
+      _aux.alertar("Este publicador já existe!", "danger", true);
+      return;
+    }
+
+    // console.log(nome);
+    // console.log(Publicador);
     const pubID = await Store.addDoc("publicadores", Publicador);
 
     Publicador.ID = pubID;
@@ -2132,18 +2269,23 @@ const _func = {
 
     await Store.getOldTerritorio(_id);
 
-    const nomeCompleto = Territorio.atribuicao.publicador.nome
+    await Store.getOldPublicador(Territorio.atribuicao.publicador.pid);
+
+    const nomeCompleto = Territorio.atribuicao.publicador.nome;
 
     Territorio.atribuicao = {};
     Territorio.disponivel = true;
+    Publicador.disponivel = true;
 
     if (await Store.updateDoc("territorios", Territorio.ID, Territorio)) {
-      this.done(
-        `Terrirório Nº ${
-          Territorio.num
-        } desatribuido do publicador ${nomeCompleto} na data de ${today.date()}`,
-        5000
-      );
+      if (await Store.updateDoc("publicadores", Publicador.ID, Publicador)) {
+        this.done(
+          `Terrirório Nº ${
+            Territorio.num
+          } desatribuido do publicador ${nomeCompleto} na data de ${today.date()}`,
+          5000
+        );
+      }
     }
   },
 
@@ -2151,6 +2293,15 @@ const _func = {
     console.log("Eliminar", _id);
 
     const terr = await Store.getDoc("territorios", _id);
+
+    if (terr.disponivel == false) {
+      _aux.alertar(
+        "Este território está atribuido a um publicador.\nDeves desatribuir antes de eliminar.",
+        "warning",
+        true
+      );
+      return;
+    }
 
     //Apagar imagem
     if (await Storage.delImage(terr.num)) {
@@ -2192,6 +2343,7 @@ const listnerEvent = {
     });
   },
 };
+
 
 // ^////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ^////////////////////////////////////////////////////////////////////////////////////////////////////////////

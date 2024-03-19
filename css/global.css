@@ -1,5 +1,3 @@
-
-
 @media screen and (max-width: 1000px) {
   .card.game {
     width: 30%;
@@ -52,7 +50,7 @@ body {
   margin: 0;
   padding: o;
   display: block;
-  font-family: 'Noto Sans';
+  font-family: "Noto Sans";
 }
 
 .centralizar {
@@ -68,11 +66,11 @@ body {
   z-index: 10000;
 }
 
-button.floattingButton:hover{
+button.floattingButton:hover {
   transform: scale(1.001);
   font-size: larger;
 }
-  button.floattingButton{
+button.floattingButton {
   width: 3.2em;
   height: 3.2em;
   border-radius: 50%;
@@ -80,6 +78,10 @@ button.floattingButton:hover{
   right: 10%;
   bottom: 10%;
   z-index: 10;
+}
+
+.invisible {
+  display: none;
 }
 
 /* Tela Loading */
@@ -131,42 +133,54 @@ button.floattingButton:hover{
   text-decoration: none;
 }
 
-.perfil-box{
+.perfil-box {
   border: double #555;
   box-shadow: 0px 0px 5px;
-
 }
 
-.card.terr{
+.card.terr {
   cursor: pointer;
 }
 
-.card.terr:hover{
+.card.terr:hover {
   opacity: 0.85;
   transform: scale(1.01);
 }
 
-.btn-opcoes{
+.btn-opcoes {
   cursor: pointer;
 }
 
-.btn-opcoes:hover{
+.btn-opcoes:hover {
   transform: scale(1.04);
+  background: linear-gradient(90deg, white, #eee, white);
 }
 
-.btn-conf-modal{
-  height:3.5rem;
+.btn-opcoes:active {
+  background: #eee;
+}
+
+.btn-conf-modal {
+  height: 3.5rem;
   margin: 0;
   border-radius: 0;
   border-style: none;
   background: none;
 }
 
-#mapaInput{
+.btn-conf-modal:hover {
+  background-color: #eee;
+}
+
+.btn-conf-modal:active {
+  background-color: #fff;
+}
+
+#mapaInput {
   display: none;
 }
 
-.picture{
+.picture {
   background: #aaa;
   width: 100%;
   /* height: 11rem; */
@@ -178,34 +192,78 @@ button.floattingButton:hover{
   transition: background 300ms ease-in-out;
 }
 
-.picture:hover{
-  background: #ccc; 
+.picture:hover {
+  background: #ccc;
 }
 
-#picture-text > img{
+#picture-text > img {
   background-color: red;
   max-width: 100%;
   max-height: 100%;
 }
 
-.img-thumb{
+.img-thumb {
   max-width: 87px;
   max-height: 54px;
   border: solid 0.5px #c9c9c9;
+  transition: transform 30ms ease-in-out;
 }
 
-.img-thumb:hover{
-  transform: scale(1.05);
+.img-thumb:hover {
+  transform: scale(1.01);
 }
 
-.img-detail:hover{
-  transform: scale(1.1);
+.img-detail:hover {
 }
 
-#id{
+#id {
   display: none;
 }
 
-#select-pubs>option{
+#select-pubs > option {
   font-size: 1.2rem;
 }
+
+/* Color background */
+.bgg-success {
+  background: linear-gradient(90deg, white, rgb(180, 255, 180), white);
+}
+
+.bgg-warning {
+  background: linear-gradient(90deg, white, rgb(255, 255, 180), white);
+}
+
+.bgg-danger {
+  background: linear-gradient(90deg, white, rgb(255, 180, 180), white);
+}
+
+.bgg-info {
+  background: linear-gradient(90deg, white, rgb(180, 180, 255), white);
+}
+
+#select-pubs > option {
+  width: 100%;
+  padding: 5px;
+  font-size: 18px;
+}
+
+#select-pubs > option:hover {
+  background: linear-gradient(90deg, #eee, white);
+}
+
+#select-pubs > option:checked {
+  background: linear-gradient(90deg, #557, #aac);
+}
+
+#select-pubs {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.att-details{
+  font-size: 14px;
+}
+
+
+
+/* */
